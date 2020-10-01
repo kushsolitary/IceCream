@@ -12,20 +12,20 @@ import IceCream
 import RxRealm
 import RxSwift
 
-class DogsViewController: UIViewController {
+final class DogsViewController: UIViewController {
     
-    let jim = Person()
-    var dogs: [Dog] = []
-    let bag = DisposeBag()
+    private let jim = Person()
+    private var dogs: [Dog] = []
+    private let bag = DisposeBag()
     
-    let realm = try! Realm()
+    private let realm = try! Realm()
     
-    lazy var addBarItem: UIBarButtonItem = {
+    private lazy var addBarItem: UIBarButtonItem = {
         let b = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(add))
         return b
     }()
     
-    lazy var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tv = UITableView()
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tv.delegate = self
@@ -48,7 +48,7 @@ class DogsViewController: UIViewController {
         tableView.frame = view.frame
     }
     
-    func bind() {
+    private func bind() {
         let realm = try! Realm()
         
         /// Results instances are live, auto-updating views into the underlying data, which means results never have to be re-fetched.
@@ -63,11 +63,11 @@ class DogsViewController: UIViewController {
         }).disposed(by: bag)
     }
     
-    @objc func add() {
+    @objc private func add() {
         let dog = Dog()
         dog.name = "Dog Number " + "\(dogs.count)"
         dog.age = dogs.count + 1
-        dog.owner = jim
+//        dog.owner = jim
         
         let data = UIImage(named: dog.age % 2 == 1 ? "smile_dog" : "tongue_dog")!.jpegData(compressionQuality: 1.0)
         dog.avatar = CreamAsset.create(object: dog, propName: Dog.AVATAR_KEY, data: data!)
@@ -133,7 +133,7 @@ extension DogsViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-        cell?.textLabel?.text = dogs[indexPath.row].name + " Age: \(dogs[indexPath.row].age)" + " Owner: " + (dogs[indexPath.row].owner?.name ?? "homeless")
+        cell?.textLabel?.text = dogs[indexPath.row].name + " Age: \(dogs[indexPath.row].age)"
         if let data = dogs[indexPath.row].avatar?.storedData() {
             cell?.imageView?.image = UIImage(data: data)
         } else {
